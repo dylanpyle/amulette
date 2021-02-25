@@ -6,7 +6,7 @@ set -o pipefail
 set -o noglob
 
 run() {
-	deno run --allow-read src/index.ts
+  deno run --allow-read src/index.ts
 }
 
 dev() {
@@ -14,11 +14,11 @@ dev() {
 }
 
 format() {
-	deno fmt src
+  deno fmt src
 }
 
 check() {
-	deno fmt src --check
+  deno fmt src --check
   deno lint --unstable src
 }
 
