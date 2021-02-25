@@ -7,5 +7,11 @@ Experiments around mining [amulets](https://text.bargains/)
 Requires [deno](http://deno.land/)
 
 ```
-./x run
+./x run [phrase]
+```
+
+e.g.
+
+```
+./x run all i want is %
 ```

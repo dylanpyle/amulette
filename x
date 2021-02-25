@@ -6,11 +6,7 @@ set -o pipefail
 set -o noglob
 
 run() {
-  deno run --allow-read src/index.ts
-}
-
-dev() {
-  ./x run
+  deno run --allow-read src/index.ts $@
 }
 
 format() {

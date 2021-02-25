@@ -1,22 +1,17 @@
 import { sha256 } from "./deps.ts";
 
-console.log('Loading words...');
-const words = await Deno.readTextFile("./data/words");
-const wordList = words.toLowerCase().split('\n');
-const length = wordList.length;
+const values: Record<number, string> = {
+  4: "common",
+  5: "uncommon",
+  6: "rare",
+  7: "epic",
+  8: "legendary",
+  9: "mythic",
+};
 
-const adverbs = wordList.filter(a => a.match(/ly$/));
-const adverbsLength = adverbs.length;
-console.log(`Got ${length} words, ${adverbsLength} adverbs`);
-
-function pickRandom(): string {
-  const index = Math.floor(Math.random() * length)
-  return wordList[index];
-}
-
-function randomAdverb(): string {
-  const index = Math.floor(Math.random() * adverbsLength)
-  return adverbs[index];
+function pickRandom(elements: string[]): string {
+  const index = Math.floor(Math.random() * elements.length);
+  return elements[index];
 }
 
 function test(maybe: string) {
@@ -24,46 +19,54 @@ function test(maybe: string) {
 
   const match = hash.match(/8{7,}/g);
   if (match) {
+    const { length } = match[0];
+
     console.log({
-      maybe,
+      amulet: maybe,
       hash,
-      len: match[0].length
+      length,
+      rarity: values[length] || "???",
     });
   }
 }
 
-while (true) {
-  const [l1, l2] = [pickRandom(), pickRandom()];
-  const [u1, u2] = [l1.toUpperCase(), l2.toUpperCase()];
-  const [a1, a2] = [randomAdverb(), randomAdverb(), randomAdverb()];
-
-  test(`${u1} ${u2}`);
-  test(`${l1} ${l2}`);
-  test(`${u1} ${u2}!`);
-  test(`${l1} ${l2}!`);
-  test(`${u1} ${u2}.`);
-  test(`${l1} ${l2}.`);
-  test(`${u1}? ${u2}!`);
-  test(`${l1}? ${l2}!`);
-  test(`${u1}, ${u2}!`);
-  test(`${l1}, ${l2}!`);
-  test(`${u1}, ${u2}.`);
-  test(`${l1}, ${l2}.`);
-
-  test(`${u1} ${u2}. how lovely`);
-  test(`a small ${l1}`);
-  test(`a small ${l2}`);
-  test(`language, code, luck, and ${l1}`);
-  test(`language, code, luck, and ${l2}`);
-  test(`standing on the shoulders of ${l1}`);
-  test(`standing on the shoulders of ${l2}`);
-  test(`gently,\n${l1}`);
-  test(`gently,\n${l2}`);
-  test(`slowly,\n${l1}`);
-  test(`slowly,\n${l2}`);
-
-  test(`${a1},\n${a2},\n${l1}`);
-  test(`${a1},\n${a2},\n${l2}`);
-  test(`${a1},\n${a2},\n${l1}.`);
-  test(`${a1},\n${a2},\n${l2}.`);
+function testPermutations(...elements: string[]) {
+  test(elements.join(", "));
+  test(elements.join(", ") + ".");
+  test(elements.join(", ") + "!");
+  test(elements.join(" "));
+  test(elements.join(" ") + ".");
+  test(elements.join("\n"));
+  test(elements.join("\n") + ".");
+  test(elements.join(",\n"));
+  test(elements.join(",\n") + ".");
 }
+
+function usage() {
+  console.log("Usage: amulette [sentence]");
+  console.log(
+    "Use the special identifier % to indicate position(s) which should be tested against every word. Do not use any punctuation.",
+  );
+  console.log("Example: amulette hello my name is %");
+  Deno.exit(1);
+}
+
+async function run(phrase: string) {
+  if (phrase.length === 0) {
+    return usage();
+  }
+
+  console.log("Loading words file...");
+  const wordsFile = await Deno.readTextFile("./data/words");
+  const words = wordsFile.toLowerCase().split("\n");
+  const length = words.length;
+  console.log(`Loaded ${length} words`);
+
+  for (const word of words) {
+    const replaced = phrase.replace(/\%/g, word);
+    testPermutations(...replaced.split(" "));
+    testPermutations(...replaced.toUpperCase().split(" "));
+  }
+}
+
+await run(Deno.args.join(" "));
