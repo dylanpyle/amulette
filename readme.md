@@ -7,11 +7,13 @@ Experiments around mining [amulets](https://text.bargains/)
 Requires [deno](http://deno.land/)
 
 ```
-./x run [phrase]
+./x dictionary [phrase]
+./x book [path to book txt]
 ```
 
 e.g.
 
 ```
-./x run all i want is %
+./x dictionary all i want is %
+./x book data/moby-dick
 ```

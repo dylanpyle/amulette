@@ -1,37 +1,8 @@
-import { sha256 } from "./deps.ts";
+import { pickRandom, test } from "./util.ts";
 
-const values: Record<number, string> = {
-  4: "common",
-  5: "uncommon",
-  6: "rare",
-  7: "epic",
-  8: "legendary",
-  9: "mythic",
-};
-
-function pickRandom(elements: string[]): string {
-  const index = Math.floor(Math.random() * elements.length);
-  return elements[index];
-}
-
-function test(maybe: string) {
-  const hash = sha256(maybe, "utf8", "hex").toString();
-
-  const match = hash.match(/8{7,}/g);
-  if (match) {
-    const { length } = match[0];
-
-    console.log({
-      amulet: maybe,
-      hash,
-      length,
-      rarity: values[length] || "???",
-    });
-  }
-}
-
-function testPermutations(...elements: string[]) {
+export function testPermutations(elements: string[]) {
   test(elements.join(", "));
+  test(elements.join(". "));
   test(elements.join(", ") + ".");
   test(elements.join(", ") + "!");
   test(elements.join(" "));
@@ -43,11 +14,11 @@ function testPermutations(...elements: string[]) {
 }
 
 function usage() {
-  console.log("Usage: amulette [sentence]");
+  console.log("Usage: dictionary.ts [sentence]");
   console.log(
     "Use the special identifier % to indicate position(s) which should be tested against every word. Do not use any punctuation.",
   );
-  console.log("Example: amulette hello my name is %");
+  console.log("Example: dictionary.ts hello my name is %");
   Deno.exit(1);
 }
 
@@ -64,8 +35,8 @@ async function run(phrase: string) {
 
   for (const word of words) {
     const replaced = phrase.replace(/\%/g, word);
-    testPermutations(...replaced.split(" "));
-    testPermutations(...replaced.toUpperCase().split(" "));
+    testPermutations(replaced.split(" "));
+    testPermutations(replaced.toUpperCase().split(" "));
   }
 }
 

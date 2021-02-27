@@ -5,8 +5,12 @@ set -o nounset
 set -o pipefail
 set -o noglob
 
-run() {
-  deno run --allow-read src/index.ts $@
+dictionary() {
+  deno run --allow-read src/dictionary.ts $@
+}
+
+book() {
+  deno run --allow-read src/book.ts $@
 }
 
 format() {
