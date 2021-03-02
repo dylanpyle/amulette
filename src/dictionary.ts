@@ -1,17 +1,4 @@
-import { pickRandom, test } from "./util.ts";
-
-export function testPermutations(elements: string[]) {
-  test(elements.join(", "));
-  test(elements.join(". "));
-  test(elements.join(", ") + ".");
-  test(elements.join(", ") + "!");
-  test(elements.join(" "));
-  test(elements.join(" ") + ".");
-  test(elements.join("\n"));
-  test(elements.join("\n") + ".");
-  test(elements.join(",\n"));
-  test(elements.join(",\n") + ".");
-}
+import { pickRandom, testPermutations } from "./util.ts";
 
 function usage() {
   console.log("Usage: dictionary.ts [sentence]");
@@ -36,7 +23,6 @@ async function run(phrase: string) {
   for (const word of words) {
     const replaced = phrase.replace(/\%/g, word);
     testPermutations(replaced.split(" "));
-    testPermutations(replaced.toUpperCase().split(" "));
   }
 }
 
