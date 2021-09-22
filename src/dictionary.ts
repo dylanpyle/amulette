@@ -1,3 +1,4 @@
+import { shuffle } from "./deps.ts";
 import { pickRandom, testPermutations } from "./util.ts";
 
 function usage() {
@@ -14,15 +15,27 @@ async function run(phrase: string) {
     return usage();
   }
 
-  console.log("Loading words file...");
-  const wordsFile = await Deno.readTextFile("./data/words");
-  const words = wordsFile.toLowerCase().split("\n");
-  const length = words.length;
-  console.log(`Loaded ${length} words`);
+  if (phrase.match(/%/g) !== null) {
+    console.log("Loading words file...");
+    const wordsFile = await Deno.readTextFile("./data/words");
+    const words = shuffle(wordsFile.toLowerCase().split("\n"));
+    const length = words.length;
+    console.log(`Loaded and shuffled ${length} words`);
 
-  for (const word of words) {
-    const replaced = phrase.replace(/\%/g, word);
-    testPermutations(replaced.split(" "));
+    let i = 0;
+
+    for (const word of words) {
+      const replaced = phrase.replace(/\%/g, word);
+      testPermutations(replaced.split(" "));
+      i++;
+
+      if (i % 100 === 0) {
+        console.log(`${Math.round((i / length) * 100)}% (${word})`);
+      }
+    }
+  } else {
+    console.log("Testing permutations without substitution");
+    testPermutations(phrase.split(" "));
   }
 }
 

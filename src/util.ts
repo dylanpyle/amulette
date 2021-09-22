@@ -30,11 +30,42 @@ export function test(maybe: string) {
   }
 }
 
-function testPunctuationPermutations(words: string[], punctuation: string) {
-  for (let i = 1; i < words.length; i++) {
-    const withNewline = words.slice(0, i).join(" ") + punctuation +
-      words.slice(i).join(" ");
-    test(withNewline);
+const punctuations = [
+  "\n",
+  ". ",
+  ", ",
+  "/",
+  "! ",
+  "? ",
+  ".\n",
+  ",\n",
+  "!\n",
+  "?\n",
+  "... ",
+  "...\n",
+];
+
+const endingPunctuations = [
+  "",
+  ".",
+  "!",
+  "?",
+  "...",
+];
+
+function testPunctuationPermutations(words: string[]) {
+  for (const p of punctuations) {
+    for (let i = 1; i < words.length; i++) {
+      const onePunc = words.slice(0, i).join(" ") + p +
+        words.slice(i).join(" ");
+
+      const allPunc = words.join(p);
+
+      for (const suffix of endingPunctuations) {
+        test(onePunc + suffix);
+        test(allPunc + suffix);
+      }
+    }
   }
 }
 
@@ -59,16 +90,6 @@ function testCapitalPermutations(words: string[]) {
   }
 }
 
-const punctuations = [
-  "\n",
-  ". ",
-  ", ",
-  "! ",
-  ".\n",
-  ",\n",
-  "!\n",
-];
-
 export function testPermutations(words: string[]) {
   const lower = words.map((w) => w.toLowerCase());
   const upper = words.map((w) => w.toUpperCase());
@@ -81,12 +102,10 @@ export function testPermutations(words: string[]) {
   test(upper.join(" "));
   test(capitalized.join(" "));
 
-  for (const punctuation of punctuations) {
-    testPunctuationPermutations(words, punctuation);
-    testPunctuationPermutations(lower, punctuation);
-    testPunctuationPermutations(upper, punctuation);
-    testPunctuationPermutations(capitalized, punctuation);
-  }
+  testPunctuationPermutations(words);
+  testPunctuationPermutations(lower);
+  testPunctuationPermutations(upper);
+  testPunctuationPermutations(capitalized);
 
   testMissingWordPermutations(words);
   testMissingWordPermutations(lower);
