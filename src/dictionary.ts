@@ -17,7 +17,7 @@ async function run(phrase: string) {
 
   if (phrase.match(/%/g) !== null) {
     console.log("Loading words file...");
-    const wordsFile = await Deno.readTextFile("./data/words");
+    const wordsFile = await Deno.readTextFile("./data/haiku-words-3");
     const words = shuffle(wordsFile.toLowerCase().split("\n"));
     const length = words.length;
     console.log(`Loaded and shuffled ${length} words`);
@@ -29,7 +29,7 @@ async function run(phrase: string) {
       testPermutations(replaced.split(" "));
       i++;
 
-      if (i % 100 === 0) {
+      if (i % 1000 === 0) {
         console.log(`${Math.round((i / length) * 100)}% (${word})`);
       }
     }

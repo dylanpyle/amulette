@@ -13,6 +13,10 @@ book() {
   deno run --allow-read src/book.ts $@
 }
 
+dots() {
+  deno run src/dots.ts
+}
+
 format() {
   deno fmt src
 }

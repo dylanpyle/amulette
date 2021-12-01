@@ -17,7 +17,7 @@ export function pickRandom(elements: string[]): string {
 export function test(maybe: string) {
   const hash = sha256(maybe, "utf8", "hex").toString();
 
-  const match = hash.match(/8{7,}/g);
+  const match = hash.match(/8{6,}/g);
   if (match) {
     const { length } = match[0];
 
